@@ -80,13 +80,12 @@ RSpec.describe Merchant, type: :model do
 
     describe "#items_ready_to_ship" do
       it "returns a list of the all the items that have been ordered and are ready to ship" do
-        expect(@merchant1.items_ready_to_ship.length).to eq(4)
+        expect(@merchant1.items_ready_to_ship.length).to eq(5)
         items = @merchant1.items_ready_to_ship
         expect(items.first.invoice_items.first.item.name).to eq(@item1.name)
         expect(items.third.invoice_items.first.item.name).to eq(@item2.name)
       end
     end
-
     
     describe "#five-most-popular-items" do
       it "displays the names of the top five items by total revenue generated" do
@@ -116,6 +115,10 @@ RSpec.describe Merchant, type: :model do
     describe ':: Top_five_revenue' do
       it 'finds 5 merchants with highest revenue' do
         expect(Merchant.top_five_revenue).to eq([@merchant3, @merchant4, @merchant6, @merchant2, @merchant5])
+
+    describe "#top-five-items" do
+      it "displays the names of the top five items by total revenue generated" do
+        expect(@merchant1.top_five_items.first.name).to eq(@item1.name)
       end
     end
   end
