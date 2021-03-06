@@ -1,0 +1,18 @@
+<section id="all-merchant-bulk-discounts">
+  <h1><%= @merchant.name %> Bulk Discounts</h1>
+  <table>
+    <tr>
+      <th>Number</th>
+      <th>Quantity Treshold</th>
+      <th>Percentage Discount</th>
+    </tr>
+    <% @merchant_bulk_discounts.each do |discount| %>
+        <tr id="bulk-discount-<%= discount.id %>-info">
+          <td><%= discount.id %></td>
+          <td><%= discount.quantity_treshold %></td>
+          <td><%= discount.percentage_discount %> %</td>
+          <td><%= link_to "View Bulk Discount # #{discount.id}", merchant_bulk_discount_path(@merchant, discount) %></td>
+        </tr>
+    <% end %>
+  </table>
+</section>
