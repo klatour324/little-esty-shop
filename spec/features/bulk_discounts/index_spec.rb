@@ -53,5 +53,18 @@ RSpec.describe "Index Page" do
           end
       end
     end
+    describe "I visit my bulk discounts index" do
+      describe "Then next to each bulk discount I see a link to delete it" do
+        it "I can delete the bulk discount by clicking the link" do
+          visit "/merchant/#{@merchant1.id}/bulk_discounts"
+            within "#all-merchant-bulk-discounts" do
+              expect(page).to have_link("Delete Bulk Discount # #{@merchant1_bulk_discount1.id}")
+              expect(page).to have_link("Delete Bulk Discount # #{@merchant1_bulk_discount2.id}")
+              expect(page).to have_link("Delete Bulk Discount # #{@merchant1_bulk_discount3.id}")
+              expect(page).to_not have_link("Delete Bulk Discount # #{@merchant2_bulk_discount1.id}")
+            end
+        end
+      end
+    end
   end
 end
