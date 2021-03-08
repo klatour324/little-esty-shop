@@ -29,7 +29,7 @@ RSpec.describe "Bulk Discount Show Page" do
         visit "/merchant/#{@merchant1.id}/bulk_discounts/#{@merchant1_bulk_discount1.id}"
           within "#bulk-discount-information" do
             expect(page).to_not have_content(@merchant2_bulk_discount1.quantity_treshold)
-            expect(page).to_not have_c sdafFFLGontent(@merchant2_bulk_discount1.percentage_discount)
+            expect(page).to_not have_content(@merchant2_bulk_discount1.percentage_discount)
           end
       end
     end
