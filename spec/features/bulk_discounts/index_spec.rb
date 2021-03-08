@@ -62,6 +62,9 @@ RSpec.describe "Index Page" do
               expect(page).to have_link("Delete Bulk Discount # #{@merchant1_bulk_discount2.id}")
               expect(page).to have_link("Delete Bulk Discount # #{@merchant1_bulk_discount3.id}")
               expect(page).to_not have_link("Delete Bulk Discount # #{@merchant2_bulk_discount1.id}")
+              click_link("Delete Bulk Discount # #{@merchant1_bulk_discount1.id}")
+              expect(current_path).to eq("/merchant/#{@merchant1.id}/bulk_discounts")
+              expect(page).to_not have_link("Delete Bulk Discount # #{@merchant1_bulk_discount1.id}")
             end
         end
       end
