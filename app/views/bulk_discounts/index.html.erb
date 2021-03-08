@@ -15,7 +15,8 @@
           <td><%= discount.id %></td>
           <td><%= discount.quantity_treshold %></td>
           <td><%= discount.percentage_discount %> %</td>
-          <td><%= link_to "View Bulk Discount # #{discount.id}", merchant_bulk_discount_path(@merchant, discount) %></td>
+          <td><%= link_to "View Bulk Discount # #{discount.id}", merchant_bulk_discount_path(@merchant, discount), method: :get %></td>
+          <td><%= link_to "Delete Bulk Discount # #{discount.id}", merchant_bulk_discount_path(@merchant, discount), method: :delete %></td>
         </tr>
     <% end %>
   </table>
