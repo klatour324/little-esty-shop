@@ -5,6 +5,7 @@ RSpec.describe "Merchant Invoice Show Page" do
     @merchant = Merchant.create(name: "John's Jewelry")
     @savy_merchant = Merchant.create(name: "Save Lotz")
     @discount1 = @savy_merchant.bulk_discounts.create(quantity_treshold: 500, percentage_discount: 25)
+    @discount2 = @savy_merchant.bulk_discounts.create(quantity_treshold: 400, percentage_discount: 20)
     @not_merchant = Merchant.create(name: "Mikey Mouse Rings")
     @not_item = @not_merchant.items.create(name: "Mouse Ring", description: "Oh Toodles", unit_price: 12.99)
     @item_lot = @savy_merchant.items.create(name: "USB Chargers", description: "Latest Model USB", unit_price: 15.99)
@@ -85,7 +86,9 @@ RSpec.describe "Merchant Invoice Show Page" do
     it "I see that the total revenue for my merchant includes bulk discounts in the calculation" do
       visit "/merchant/#{@merchant.id}/invoices/#{@discount_invoice.id}"
         within "#invoice-total-revenue" do
-          expect(page).to have_content(@discount_invoice.total_revenue)
+          expect(page).to have_content(@discount_invoice.total_revenue_with_discount)
+          expect(page).to_not have_content(@invoice1.total_revenue_with_discount)
+          expect(page).to_not have_content(@invoice2.total_revenue_with_discount)
         end
     end
   end
