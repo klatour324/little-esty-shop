@@ -8,7 +8,10 @@ class Invoice < ApplicationRecord
   enum status: {"in progress" => 0, completed: 1, cancelled: 2}
 
   def total_revenue
+    require "pry"; binding.pry
     invoice_items.calculate_revenue
+    # bulk_discounts.where("bulk_discounts.quantity_treshold = invoice_items.quantity")
+    # .select("sum(invoice_items.unit_price * invoice_items.quantity) as sales")
   end
 
   def self.not_shipped
