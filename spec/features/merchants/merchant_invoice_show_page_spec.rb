@@ -91,5 +91,16 @@ RSpec.describe "Merchant Invoice Show Page" do
           expect(page).to_not have_content(@invoice2.total_revenue_with_discount)
         end
     end
+    it "Next to each invoice item I see a link to the show page for the bulk discount that was applied if any" do
+      visit "/merchant/#{@merchant.id}/invoices/#{@discount_invoice.id}"
+        within "#bulk-discounts" do
+          expect(page).to have_content(@discount1.id)
+        end
+    end
   end
 end
+
+
+# As a merchant
+# When I visit my merchant invoice show page
+# Next to each invoice item I see a link to the show page for the bulk discount that was applied (if any)
