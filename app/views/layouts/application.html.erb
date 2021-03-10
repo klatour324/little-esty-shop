@@ -15,9 +15,11 @@
       <hr>
       Repo Pull Request Count: <%= @repo_pull_count %><br>
       <hr>
-      <% @repo_contributors.each do |contributor| %>
-        <%= "Contributor #{contributor[0]} has #{contributor[1]} commits" %><br>
-        <hr>
+      <% if @repo_contributors %>
+        <% @repo_contributors.each do |contributor| %>
+          <%= "Contributor #{contributor[0]} has #{contributor[1]} commits" %><br>
+          <hr>
+        <% end %>
       <% end %>
       <% flash.each do |type, message| %>
         <p><%= message %></p>

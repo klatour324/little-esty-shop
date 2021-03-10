@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :names, :contributors, :pulls
+  # before_action :names, :contributors, :pulls
 
   def names
     json = GithubService.new.repos
