@@ -8,10 +8,7 @@ class Invoice < ApplicationRecord
   enum status: {"in progress" => 0, completed: 1, cancelled: 2}
 
   def total_revenue
-    require "pry"; binding.pry
     invoice_items.calculate_revenue
-    # bulk_discounts.where("bulk_discounts.quantity_treshold = invoice_items.quantity")
-    # .select("sum(invoice_items.unit_price * invoice_items.quantity) as sales")
   end
 
   def self.not_shipped
@@ -27,5 +24,15 @@ class Invoice < ApplicationRecord
 
   def status_format
     status.titleize
+  end
+
+  def discount_total
+     invoice_items.joins(:bulk_discounts).where("invoice_items.quantity >= bulk_discounts.quantity_treshold")
+     .select("(invoice_items.unit_price * invoice_items.quantity)/bulk_discounts.percentage_discount as revenue_discount, invoice_items.*, bulk_discounts.id as bulk_discount_id")
+     .order(revenue_discount: :desc)
+  end
+
+  def total_revenue_with_discount
+    total_revenue - discount_total.uniq.sum(&:revenue_discount)
   end
 end
