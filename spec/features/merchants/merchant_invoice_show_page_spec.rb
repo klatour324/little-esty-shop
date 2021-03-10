@@ -65,7 +65,6 @@ RSpec.describe "Merchant Invoice Show Page" do
         expect(page).to_not have_content(@not_invoice_item.quantity)
         expect(page).to_not have_content(@not_invoice_item.unit_price)
 
-        save_and_open_page
         within "#invoice-items-#{@invoice_item1.id}-info" do
           expect(page).to have_content(@item1.name)
           expect(page).to have_content(@invoice_item1.quantity)
@@ -112,8 +111,3 @@ RSpec.describe "Merchant Invoice Show Page" do
     end
   end
 end
-
-
-# As a merchant
-# When I visit my merchant invoice show page
-# Next to each invoice item I see a link to the show page for the bulk discount that was applied (if any)
