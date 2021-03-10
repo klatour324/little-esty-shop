@@ -25,4 +25,14 @@ class Invoice < ApplicationRecord
   def status_format
     status.titleize
   end
+
+  def discount_total
+     invoice_items.joins(:bulk_discounts).where("invoice_items.quantity >= bulk_discounts.quantity_treshold")
+     .select("(invoice_items.unit_price * invoice_items.quantity)/bulk_discounts.percentage_discount as revenue_discount, invoice_items.*, bulk_discounts.id as bulk_discount_id")
+     .order(revenue_discount: :desc)
+  end
+
+  def total_revenue_with_discount
+    total_revenue - discount_total.uniq.sum(&:revenue_discount)
+  end
 end
