@@ -6,8 +6,9 @@
 </section>
 <section id="invoice-total-revenue">
   <p>Total Revenue: $<%= @merchant_invoice.total_revenue %></p>
-  <p>Total Revenue with Discounts: $<%= @merchant_invoice.total_revenue_with_discount %></p>
+  <p>Total Revenue with Discounts: $<%= @merchant_invoice.total_revenue_with_discount.round(2) %></p>
 </section>
+
 <section id="invoice-customer-info">
   <h2>Customer:</h2>
   <p><%= @merchant_invoice.customer.name %></p>
@@ -22,16 +23,31 @@
       <th>Unit Price</th>
       <th>Status</th>
     </tr>
-    <% @merchant_invoice.invoice_items.each do |invoice_item| %>
-        <tr id="invoice-items-<%= invoice_item.id %>-info">
-          <td><%= invoice_item.item.name %></td>
-          <td><%= invoice_item.quantity %></td>
-          <td>$<%= invoice_item.unit_price %></td>
-          <td><%= form_with url: "/merchant/#{@merchant.id}/invoice_items/#{invoice_item.id}", method: :patch do |form|  %>
-            <%= form.select :status, ["Pending", "Packaged", "Shipped"], selected: "#{invoice_item.status.titleize}" %>
-            <%= form.button "Update Item Status" %>
-          <% end %></td>
-        </tr>
+    <% if !@merchant_invoice.discount_total.empty? %>
+      <% @merchant_invoice.discount_total.each do |invoice_item| %>
+          <tr id="invoice-items-<%= invoice_item.id %>-info">
+            <td><%= invoice_item.item.name %></td>
+            <td><%= invoice_item.quantity %></td>
+            <td>$<%= invoice_item.unit_price %></td>
+            <td><%= form_with url: "/merchant/#{@merchant.id}/invoice_items/#{invoice_item.id}", method: :patch do |form|  %>
+              <%= form.select :status, ["Pending", "Packaged", "Shipped"], selected: "#{invoice_item.status.titleize}" %>
+              <%= form.button "Update Item Status" %>
+            <% end %></td>
+            <td id="bulk-discount-<%= invoice_item.bulk_discount_id %>"> <%= link_to "View Discount # #{invoice_item.bulk_discount_id} Applied", merchant_bulk_discount_path(@merchant, invoice_item.bulk_discount_id), method: :get %></td>
+          </tr>
+      <% end %>
+    <% elsif @merchant_invoice.discount_total.empty? %>
+      <% @merchant_invoice.invoice_items.each do |invoice_item| %>
+          <tr id="invoice-items-<%= invoice_item.id %>-info">
+            <td><%= invoice_item.item.name %></td>
+            <td><%= invoice_item.quantity %></td>
+            <td>$<%= invoice_item.unit_price %></td>
+            <td><%= form_with url: "/merchant/#{@merchant.id}/invoice_items/#{invoice_item.id}", method: :patch do |form|  %>
+              <%= form.select :status, ["Pending", "Packaged", "Shipped"], selected: "#{invoice_item.status.titleize}" %>
+              <%= form.button "Update Item Status" %>
+            <% end %></td>
+          </tr>
+      <% end %>
     <% end %>
   </table>
 </section>
