@@ -2,14 +2,21 @@ require 'rails_helper'
 
 RSpec.describe Invoice, type: :model do
   before :each do
+    @john = Customer.create!(first_name: "John", last_name: "Kelley")
     @customer1 = Customer.create(first_name: "Joe",
                                  last_name: "Smith")
     @invoice1 = @customer1.invoices.create(status: 0)
     @invoice2 = @customer1.invoices.create(status: 1)
     @invoice3 = @customer1.invoices.create(status: 2)
     @invoice4 = @customer1.invoices.create(status: 0)
+    @discount_invoice = @john.invoices.create(status: 1)
 
+
+    @savy_merchant = Merchant.create(name: "Save Lotz")
     @merchant = Merchant.create(name: "John's Jewelry")
+    @discount1 = @savy_merchant.bulk_discounts.create(quantity_treshold: 500, percentage_discount: 25)
+    @discount2 = @savy_merchant.bulk_discounts.create(quantity_treshold: 400, percentage_discount: 20)
+    @item_lot = @savy_merchant.items.create(name: "USB Chargers", description: "Latest Model USB", unit_price: 15.99)
     @item1 = @merchant.items.create(name: "Gold Ring", description: "14K Wedding Band",
                                     unit_price: 599.95)
     @item2 = @merchant.items.create(name: "Diamond Ring", description: "Shiny",
@@ -30,6 +37,9 @@ RSpec.describe Invoice, type: :model do
     @invoice_item4 = InvoiceItem.create!(invoice_id: @invoice4.id,
                                          item_id: @item4.id, quantity: 400,
                                          unit_price: 100.00, status: 0)
+    @johns_invoice_item = InvoiceItem.create!(invoice_id: @discount_invoice.id,
+                                          item_id: @item_lot.id, quantity: 500,
+                                          unit_price: 15.99, status: 2)
 
   end
 
@@ -78,6 +88,14 @@ RSpec.describe Invoice, type: :model do
     describe "#total_revenue" do
       it "returns total sum of the invoice_item quanity * invoice_item unit_price " do
         expect(@invoice1.total_revenue.round(2)).to eq(299975.00)
+      end
+    end
+
+    describe "#discount_total" do
+      it "returns joins table showing the highest bulk_discount applied and calculates the discount amount as revenue_discount " do
+        expect(@discount_invoice.discount_total.length).to eq(2)
+        expect(@discount_invoice.discount_total.first.bulk_discount_id).to eq(@discount2.id)
+        expect(@discount_invoice.discount_total.first.revenue_discount).to be > (@discount_invoice.discount_total.second.revenue_discount)
       end
     end
 
