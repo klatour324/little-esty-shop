@@ -116,7 +116,15 @@ RSpec.describe Invoice, type: :model do
         expect(@discount_invoice.discount_total.second.item_id).to eq(@network_cables.id)
       end
     end
-
+    describe "#total_revenue_with_discount" do
+      it "returns the adjusted revenue for an invoice with discounts" do
+        expect(@discount_invoice.total_revenue_with_discount).to be < (@discount_invoice.total_revenue)
+        expect(@discount_invoice.total_revenue_with_discount).to eq(10254.4)
+      end
+      it "returns the same amount as revenue since there were no discounts in the invoice" do
+        expect(@invoice1.total_revenue_with_discount).to eq(@invoice1.total_revenue)
+      end
+    end
     describe "class methods" do
       describe "::not_shipped" do
         it "returns the invoices that have not been shipped and orders them from oldest to newest" do
