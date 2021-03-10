@@ -11,12 +11,17 @@ RSpec.describe Invoice, type: :model do
     @invoice4 = @customer1.invoices.create(status: 0)
     @discount_invoice = @john.invoices.create(status: 1)
 
-
     @savy_merchant = Merchant.create(name: "Save Lotz")
     @merchant = Merchant.create(name: "John's Jewelry")
+
     @discount1 = @savy_merchant.bulk_discounts.create(quantity_treshold: 500, percentage_discount: 25)
     @discount2 = @savy_merchant.bulk_discounts.create(quantity_treshold: 400, percentage_discount: 20)
+    @discount3 = @savy_merchant.bulk_discounts.create(quantity_treshold: 1200, percentage_discount: 50)
+    @discount4 = @savy_merchant.bulk_discounts.create(quantity_treshold: 150, percentage_discount: 5)
+
     @item_lot = @savy_merchant.items.create(name: "USB Chargers", description: "Latest Model USB", unit_price: 15.99)
+    @network_cables = @savy_merchant.items.create(name: "Network Cables", description: "2ft Long High Quality Cable", unit_price: 20.99)
+
     @item1 = @merchant.items.create(name: "Gold Ring", description: "14K Wedding Band",
                                     unit_price: 599.95)
     @item2 = @merchant.items.create(name: "Diamond Ring", description: "Shiny",
@@ -25,6 +30,7 @@ RSpec.describe Invoice, type: :model do
                                     unit_price: 350.00)
     @item4 = @merchant.items.create(name: "Mood Ring", description: "Strong mood vibes",
                                     unit_price: 100.00)
+
     @invoice_item1 = InvoiceItem.create!(invoice_id: @invoice1.id,
                                          item_id: @item1.id, quantity: 500,
                                          unit_price: 599.95, status: 0)
@@ -40,6 +46,12 @@ RSpec.describe Invoice, type: :model do
     @johns_invoice_item = InvoiceItem.create!(invoice_id: @discount_invoice.id,
                                           item_id: @item_lot.id, quantity: 500,
                                           unit_price: 15.99, status: 2)
+    @johns_invoice_item2 = InvoiceItem.create!(invoice_id: @discount_invoice.id,
+                                          item_id: @network_cables.id, quantity: 200,
+                                          unit_price: 20.99, status: 2)
+    @johns_invoice_item3 = InvoiceItem.create!(invoice_id: @discount_invoice.id,
+                                          item_id: @item4.id, quantity: 5,
+                                          unit_price: 100, status: 2)
 
   end
 
@@ -93,9 +105,15 @@ RSpec.describe Invoice, type: :model do
 
     describe "#discount_total" do
       it "returns joins table showing the highest bulk_discount applied and calculates the discount amount as revenue_discount " do
-        expect(@discount_invoice.discount_total.length).to eq(2)
-        expect(@discount_invoice.discount_total.first.bulk_discount_id).to eq(@discount2.id)
+        expect(@discount_invoice.discount_total.length).to eq(4)
+        expect(@discount_invoice.discount_total.first.bulk_discount_id).to eq(@discount4.id)
+      end
+      it "can only apply to highest revenue discount" do
         expect(@discount_invoice.discount_total.first.revenue_discount).to be > (@discount_invoice.discount_total.second.revenue_discount)
+      end
+      it "can have include different items from same merchant" do
+        expect(@discount_invoice.discount_total.first.item_id).to eq(@item_lot.id)
+        expect(@discount_invoice.discount_total.second.item_id).to eq(@network_cables.id)
       end
     end
 
