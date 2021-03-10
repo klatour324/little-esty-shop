@@ -6,9 +6,13 @@ RSpec.describe "Merchant Invoice Show Page" do
     @savy_merchant = Merchant.create(name: "Save Lotz")
     @discount1 = @savy_merchant.bulk_discounts.create(quantity_treshold: 500, percentage_discount: 25)
     @discount2 = @savy_merchant.bulk_discounts.create(quantity_treshold: 400, percentage_discount: 20)
+    @discount3 = @savy_merchant.bulk_discounts.create(quantity_treshold: 1200, percentage_discount: 50)
+    @discount4 = @savy_merchant.bulk_discounts.create(quantity_treshold: 150, percentage_discount: 5)
     @not_merchant = Merchant.create(name: "Mikey Mouse Rings")
     @not_item = @not_merchant.items.create(name: "Mouse Ring", description: "Oh Toodles", unit_price: 12.99)
     @item_lot = @savy_merchant.items.create(name: "USB Chargers", description: "Latest Model USB", unit_price: 15.99)
+    @network_cables = @savy_merchant.items.create(name: "Network Cables", description: "2ft Long High Quality Cable", unit_price: 20.99)
+
     @item1 = @merchant.items.create(name: "Gold Ring", description: "14K Wedding Band",
                                   unit_price: 599.95)
     @item2 = @merchant.items.create(name: "Pearl Necklace", description: "Beautiful White Pearls",
@@ -31,6 +35,13 @@ RSpec.describe "Merchant Invoice Show Page" do
     @johns_invoice_item = InvoiceItem.create!(invoice_id: @discount_invoice.id,
                                        item_id: @item_lot.id, quantity: 500,
                                        unit_price: 15.99, status: 2)
+    @johns_invoice_item2 = InvoiceItem.create!(invoice_id: @discount_invoice.id,
+                                          item_id: @network_cables.id, quantity: 200,
+                                          unit_price: 20.99, status: 2)
+    @johns_invoice_item3 = InvoiceItem.create!(invoice_id: @discount_invoice.id,
+                                          item_id: @item2.id, quantity: 5,
+                                          unit_price: 100, status: 2)
+
   end
   describe "When I visit my merchant's invoice show page(/merchants/merchant_id/invoices/invoice_id)" do
     it "I see the invoice attributes listed" do
@@ -54,6 +65,7 @@ RSpec.describe "Merchant Invoice Show Page" do
         expect(page).to_not have_content(@not_invoice_item.quantity)
         expect(page).to_not have_content(@not_invoice_item.unit_price)
 
+        save_and_open_page
         within "#invoice-items-#{@invoice_item1.id}-info" do
           expect(page).to have_content(@item1.name)
           expect(page).to have_content(@invoice_item1.quantity)
@@ -93,8 +105,9 @@ RSpec.describe "Merchant Invoice Show Page" do
     end
     it "Next to each invoice item I see a link to the show page for the bulk discount that was applied if any" do
       visit "/merchant/#{@merchant.id}/invoices/#{@discount_invoice.id}"
-        within "#bulk-discounts" do
-          expect(page).to have_content(@discount1.id)
+        within "#bulk-discount-#{@discount1.id}" do
+          expect(page).to have_content("View Discount # #{@discount1.id} Applied")
+          expect(page).to_not have_content("View Discount # #{@discount3.id} Applied")
         end
     end
   end
