@@ -3,9 +3,9 @@
 </section>
 <section id="upcoming-holidays">
   <h3>Upcoming US Holidays: </h3>
-  <p><%= @holidays.first.holiday %></p>
-  <p><%= @holidays.second.holiday %></p>
-  <p><%= @holidays.third.holiday %></p>
+  <p><%= @holidays.first.holiday %> <%= @holidays.first.holiday_date %></p>
+  <p><%= @holidays.second.holiday %> <%= @holidays.second.holiday_date %></p>
+  <p><%= @holidays.third.holiday %> <%= @holidays.third.holiday_date %></p>
 </section>
 <section id="all-merchant-bulk-discounts">
   <h1><%= @merchant.name %> Bulk Discounts</h1>
