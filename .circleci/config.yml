@@ -14,7 +14,7 @@ workflows:
             branches:
               only: main
           post-steps:
-            - run: heroku run rails db:migrate -a ENV['HEROKU_APP_NAME']
+            - run: heroku run rails db:migrate -a $HEROKU_APP_NAME
 
 jobs:
   build:
