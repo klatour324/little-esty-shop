@@ -3,22 +3,15 @@ orbs:
   heroku: circleci/heroku@1.2.6
   ruby: circleci/ruby@0.1.2
 
-workflows:
-  jobs:
-    - build
-    - heroku/deploy-via-git:
-      requires:
-        filters:
-          branches:
-            only: main
-      docker:
-        - image: circleci/ruby:2.5.3-stretch-node
-      executor: heroku/default
-      steps:
-        - checkout
-        - heroku/install
-        - run: gem install bundler
-        - run:
-            name: Which bundler?
-            command: bundle -v
-        - ruby/bundle-install
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.5.3-stretch-node
+    executor: ruby/default
+    steps:
+      - checkout
+      - run: gem install bundler
+      - run:
+          name: Which bundler?
+          command: bundle -v
+      - ruby/bundle-install
